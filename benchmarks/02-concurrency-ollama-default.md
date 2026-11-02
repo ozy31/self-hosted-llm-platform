@@ -11,3 +11,11 @@ Observations (2026-11-01)
 - Aggregate throughput is flat at ~16-21 tok/s no matter how many users: one GPU, decoding is memory-bandwidth bound. More users = same pie, smaller slices.
 - TTFT goes from 0.5 s (1 user) to 20-40 s (4-8 users): requests queue.
 - The 2-user row (58 s TTFT) is an outlier: the user was chatting in Open WebUI at the same time, and Open WebUI also sends background requests (title/tags/follow-ups) to the same model. To re-run on an idle machine.
+
+Re-run on idle machine (2026-11-02):
+| Users | OK/err | TTFT p50 | TTFT max | Latency p50 | Latency max | Per-user tok/s | Total tok/s |
+|---|---|---|---|---|---|---|---|
+| 1 | 1/0 | 0.3s | 0.3s | 6.6s | 6.6s | 19.5 | 19.5 |
+| 2 | 2/0 | 3.4s | 6.7s | 9.8s | 13.0s | 14.5 | 19.7 |
+| 4 | 4/0 | 9.3s | 18.6s | 15.4s | 24.6s | 8.7 | 20.8 |
+- Total throughput stays ~20 tok/s; TTFT max roughly = queue position × one answer → requests effectively served one at a time.

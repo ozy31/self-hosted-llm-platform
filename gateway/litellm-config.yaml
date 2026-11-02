@@ -1,15 +1,19 @@
 # LiteLLM gateway: OpenAI-compatible API in front of the local Ollama models.
 model_list:
+  # Ollama silently truncates prompts beyond its context window (~2k via this path), dropping RAG/web-search
+  # context that Open WebUI puts at the start; num_ctx raises the window.
   # Fast chat: Qwen3 with thinking disabled (thinking can add 1-2 min per answer on an M1 Pro).
   - model_name: ozai
     litellm_params:
       model: ollama_chat/qwen3:8b
       api_base: http://host.docker.internal:11434
       reasoning_effort: none
+      num_ctx: 8192
   - model_name: ozai-think
     litellm_params:
       model: ollama_chat/qwen3:8b
       api_base: http://host.docker.internal:11434
+      num_ctx: 8192
   - model_name: ozai-coder
     litellm_params:
       model: ollama_chat/qwen2.5-coder:3b

@@ -1,0 +1,5 @@
+apiVersion: 1
+providers:
+  - name: ozai
+    folder: OzAI
+    options: { path: /var/lib/grafana/dashboards }

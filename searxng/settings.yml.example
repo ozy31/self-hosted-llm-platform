@@ -1,0 +1,11 @@
+# SearXNG for Open WebUI web search. JSON output is required by Open WebUI.
+use_default_settings: true
+server:
+  secret_key: "CHANGE_ME"  # openssl rand -hex 32
+  limiter: false
+  image_proxy: false
+search:
+  safe_search: 0
+  formats:
+    - html
+    - json
