@@ -2,3 +2,7 @@
 *.log
 __pycache__/
 searxng/settings.yml
+rag/index.json
+rag/docs/
+rag/eval_results.json
+articles/*/src/

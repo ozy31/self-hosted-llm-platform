@@ -1,0 +1,152 @@
+[
+ {
+  "q": "In the KEDA RabbitMQ scaler, what are the possible values of the mode parameter?",
+  "base": [
+   false,
+   18.47745108604431,
+   34
+  ],
+  "base_answer": "In the **KEDA RabbitMQ scaler**, the `mode` parameter determines how the scaler interacts with the RabbitMQ message queue to trigger scaling. The possible values for the `mode` parameter are:\n\n### ✅ **Possible Values of `mode`:**\n\n1. **`pull`** (default)\n2. **`push`**\n\n---\n\n### 🔍 **Explanation of Each Mode:**\n\n#### 1. **`pull` (Default)**\n- This is the **default mode**.\n- The scaler **pulls** messages from the RabbitMQ queue.\n- It uses the **RabbitMQ management API** to check the number of messages in the queue.\n- This mode is **recommended** for most use cases.\n- It is **more stable** and **less resource-intensive** than the `push` mode.\n\n#### 2. **`push`**\n- In this mode, the scaler **pushes** messages to a **temporary queue**.\n- It uses a **consumer** to receive messages from the RabbitMQ queue.\n- This mode is **less stable** and **more resource-intensive**.\n- It is typically used for **specific use cases** where you need to **simulate** message consumption or **test** the scaler behavior.\n\n---\n\n### 📌 Summary Table:\n\n| Mode  | Description | Stability | Resource Usage |\n|-------|-------------|-----------|----------------|\n| `pull` | Pulls messages from the queue | ✅ Stable | ⚠️ Moderate |\n| `push` | Pushes messages to a temporary queue | ⚠️ Less stable | ⚠️ High |\n\n---\n\n### 📌 Example Usage in Kubernetes:\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: rabbitmq-scaledobject\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: my-app\n  triggers:",
+  "rag": [
+   false,
+   10.792135953903198,
+   1486
+  ],
+  "rag_answer": "The possible values of the `mode` parameter in the KEDA RabbitMQ scaler are `QueueLength` and `ExpectedQueueConsumptionTime` [1], [4]. Additionally, there is a `MessageRate` mode mentioned in the context [5]. Therefore, the possible values are `QueueLength`, `ExpectedQueueConsumptionTime`, and `MessageRate`."
+ },
+ {
+  "q": "Which protocol values does the KEDA RabbitMQ scaler accept, and which one is the default?",
+  "base": [
+   false,
+   18.491607904434204,
+   35
+  ],
+  "base_answer": "The **KEDA RabbitMQ scaler** is used to scale Kubernetes workloads based on the number of messages in a **RabbitMQ queue**. It supports several **protocol values** that define how the scaler interacts with RabbitMQ. Here's a breakdown of the supported protocol values and the default:\n\n---\n\n### ✅ **Supported Protocol Values**\n\nThe KEDA RabbitMQ scaler supports the following **protocol values** (which define how the scaler connects to RabbitMQ):\n\n| Protocol Value | Description |\n|----------------|-------------|\n| `amqp` | Uses the **AMQP 0-9-1** protocol (the standard AMQP protocol). |\n| `amqps` | Uses the **AMQP 0-9-1** protocol over **TLS** (secure connection). |\n| `mqtt` | Uses the **MQTT** protocol (lightweight protocol for IoT and messaging). |\n| `mqttws` | Uses the **MQTT** protocol over **WebSocket** (secure connection). |\n\n---\n\n### 🚀 **Default Protocol**\n\nThe **default protocol** used by the KEDA RabbitMQ scaler is:\n\n> **`amqp`**\n\nThis is the standard AMQP protocol and is typically used for most RabbitMQ integrations.\n\n---\n\n### 📌 Example Configuration (KEDA ScaledObject)\n\nHere's an example of how you might configure the RabbitMQ scaler in a `ScaledObject`:\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: rabbitmq-scaledobject\nspec:\n  scaleTargetRef:\n    name: your-deployment\n  triggers:\n  - type: rabbitmq\n    metadata:\n      queueName: your-queue\n      rabbitmqHost: rabbitmq-host\n      rabbitmqUser: user\n      rabbitmqPassword: password\n      rabbitmqVhost: /\n      protocol: amqp  # default, can be changed to amqps,",
+  "rag": [
+   false,
+   6.605618953704834,
+   1556
+  ],
+  "rag_answer": "The KEDA RabbitMQ scaler accepts both HTTP and AMQP protocol values. The default protocol is HTTP, as indicated by the examples in the context [1], [2], [3], [4], and [5], which use the HTTP protocol. The AMQP protocol is also supported, as shown in context [6], but it is not the default."
+ },
+ {
+  "q": "What is the default lagThreshold of the KEDA Apache Kafka scaler?",
+  "base": [
+   false,
+   15.048503875732422,
+   30
+  ],
+  "base_answer": "The **default `lagThreshold`** for the **KEDA Apache Kafka scaler** is **1000**.\n\n### Explanation:\n- The **KEDA Apache Kafka scaler** is used to scale Kubernetes workloads (like Kubernetes Deployments or StatefulSets) based on the **message lag** in Apache Kafka topics.\n- The `lagThreshold` is a configuration parameter that defines the **maximum allowed lag** (in messages) before the scaler triggers a scale-out event.\n- If the **lag exceeds the threshold**, the scaler will **scale up** the workload to process more messages.\n- If the **lag drops below the threshold**, the scaler may **scale down** the workload.\n\n### Example:\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: kafka-scaledobject\nspec:\n  scaleTargetRef:\n    name: my-kafka-consumer\n  triggers:\n  - type: kafka\n    metadata:\n      bootstrapServers: \"kafka-broker:9092\"\n      topicName: \"my-topic\"\n      consumerGroup: \"my-group\"\n      lagThreshold: \"1000\"  # Default value\n```\n\n### Note:\n- The `lagThreshold` can be **customized** based on your application's requirements.\n- If you don't specify it, the **default value of 1000** is used.\n\nLet me know if you'd like to explore how to configure it or how it interacts with other parameters like `pollInterval` or `maxMessagesPerPoll`.",
+  "rag": [
+   true,
+   8.952804803848267,
+   1652
+  ],
+  "rag_answer": "The default lagThreshold of the KEDA Apache Kafka scaler is `10` [1]."
+ },
+ {
+  "q": "What does lagThreshold measure in the KEDA Apache Kafka scaler?",
+  "base": [
+   false,
+   18.363240003585815,
+   29
+  ],
+  "base_answer": "In the **KEDA (Kubernetes Event-Driven Autoscaler)** **Apache Kafka scaler**, the `lagThreshold` parameter measures the **maximum allowed message lag** (in messages) that the consumer group can have before the scaler considers the consumer to be **behind** the source topic.\n\n---\n\n### ✅ What is `lagThreshold`?\n\n- **`lagThreshold`** is a configuration parameter used in the **KEDA Apache Kafka scaler**.\n- It defines the **maximum number of unprocessed messages** (i.e., **lag**) that a consumer group can have before the scaler **deems the consumer to be \"backlogged\"**.\n- If the **consumer lag exceeds this threshold**, the scaler will **scale out** (i.e., increase the number of consumer pods) to handle the backlog.\n- If the **lag is below this threshold**, the scaler will **scale in** (i.e., reduce the number of consumer pods).\n\n---\n\n### 📌 Example\n\nIf you set:\n\n```yaml\nlagThreshold: 1000\n```\n\n- The scaler will monitor the consumer lag.\n- If the lag is **greater than 1000 messages**, it will **scale out**.\n- If the lag is **less than or equal to 1000 messages**, it will **scale in**.\n\n---\n\n### 📌 How is Lag Measured?\n\n- The scaler uses the **Kafka consumer lag** metric, which is typically obtained from the **Kafka consumer group metrics**.\n- This metric is usually exposed via **Prometheus** or other monitoring systems.\n- The scaler polls this metric periodically and compares it to the `lagThreshold`.\n\n---\n\n### 📌 Use Case\n\n- You set `lagThreshold` to a value that reflects your **acceptable backlog** for your application.\n- If the backlog exceeds this threshold, it means the consumers are **not keeping up** with the incoming messages, and you need",
+  "rag": [
+   true,
+   8.38198184967041,
+   1387
+  ],
+  "rag_answer": "The `lagThreshold` in the KEDA Apache Kafka scaler measures the target value for the total lag (sum of all partition lags) to trigger scaling actions [2]."
+ },
+ {
+  "q": "Which SASL modes does the KEDA Apache Kafka scaler support?",
+  "base": [
+   false,
+   18.35137414932251,
+   29
+  ],
+  "base_answer": "The **KEDA Apache Kafka scaler** supports the following **SASL authentication modes**:\n\n### ✅ Supported SASL Modes:\n1. **SASL/PLAIN**\n2. **SASL/SCRAM-SHA-256**\n3. **SASL/SCRAM-SHA-512**\n\n---\n\n### 📌 Notes:\n\n- These SASL modes are used for **secure authentication** when connecting to an Apache Kafka cluster.\n- The KEDA scaler uses the **Apache Kafka client** under the hood, which supports these SASL mechanisms.\n- You must configure the appropriate **SASL mechanism** in the scaler's configuration, typically via the `KAFKA_SASL_JAAS_CONFIG` environment variable or equivalent configuration.\n\n---\n\n### 📌 Example Configuration (for SASL/PLAIN):\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: kafka-scaledobject\nspec:\n  scaleTargetRef:\n    name: your-pod-name\n  triggers:\n  - type: kafka\n    metadata:\n      bootstrapServers: your-broker:9092\n      topic: your-topic\n      consumerGroup: your-group\n      minScale: \"1\"\n      maxScale: \"10\"\n      kafkaSaslUsername: your-username\n      kafkaSaslPassword: your-password\n      kafkaSaslMechanism: PLAIN\n```\n\n---\n\n### 📌 Example Configuration (for SASL/SCRAM-SHA-256):\n\n```yaml\nmetadata:\n  kafkaSaslMechanism: SCRAM-SHA-256\n  kafkaSaslUsername: your-username\n  kafkaSaslPassword: your-password\n```\n\n---\n\n### 📌 Important:\n\n- Ensure that your Kafka cluster is configured to accept the SASL mechanism you're using.\n- The KEDA scaler does **not** support **S",
+  "rag": [
+   true,
+   10.93973708152771,
+   1788
+  ],
+  "rag_answer": "The KEDA Apache Kafka scaler supports the following SASL modes: `plaintext`, `scram_sha256`, `scram_sha512`, `gssapi`, `oauthbearer`, and `none` [3]."
+ },
+ {
+  "q": "What is the default queueLength target of the KEDA AWS SQS scaler?",
+  "base": [
+   false,
+   15.855578184127808,
+   32
+  ],
+  "base_answer": "The **KEDA AWS SQS scaler** is a scaler for Kubernetes that scales your application based on the number of messages in an **Amazon SQS queue**.\n\nBy default, the **`queueLength`** target in the KEDA AWS SQS scaler is set to **0**. This means that the scaler will trigger scaling **only when there are messages in the queue** (i.e., when the queue length is greater than 0).\n\n### Example of a KEDA scaler configuration for AWS SQS:\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: my-scaledobject\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: my-deployment\n  triggers:\n  - type: aws-sqs\n    metadata:\n      queueURL: https://sqs.us-east-1.amazonaws.com/123456789012/my-queue\n      awsRegion: us-east-1\n      queueLength: \"0\"  # Default value\n```\n\n### Key Points:\n- **`queueLength`** is the target number of messages in the queue that triggers scaling.\n- If you set `queueLength` to `0`, the scaler will trigger scaling **as soon as there is at least one message** in the queue.\n- If you want to scale based on a specific number of messages (e.g., 10 messages), you can set `queueLength` to `10`.\n\nLet me know if you want to configure it for a specific number of messages or need help with the full setup!",
+  "rag": [
+   true,
+   8.814340114593506,
+   1628
+  ],
+  "rag_answer": "The default queueLength target of the KEDA AWS SQS scaler is 5 [1]."
+ },
+ {
+  "q": "What is the default listLength of the KEDA Redis Lists scaler?",
+  "base": [
+   true,
+   14.36677622795105,
+   30
+  ],
+  "base_answer": "The **KEDA Redis Lists scaler** is used to trigger Kubernetes workloads (like Kubernetes Jobs or CronJobs) based on the number of elements in a Redis list.\n\nBy default, the **`listLength`** parameter in the KEDA Redis Lists scaler is set to **`0`**. This means that the scaler will trigger the workload **only when the list length is greater than 0**.\n\n### Example of a Redis Lists scaler in a KEDA scaler configuration:\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: redis-list-scaledobject\nspec:\n  scaleTargetRef:\n    name: your-job-name\n  triggers:\n  - type: redis-list\n    metadata:\n      redisURL: redis://redis-host:6379\n      listName: your-list-name\n      listLength: \"0\"  # Default value\n```\n\n### Key Points:\n- If you set `listLength` to `0`, the scaler will trigger when the list is **not empty**.\n- If you want to trigger when the list is **empty**, you can set `listLength` to `0` and use the `redis-list-empty` trigger instead.\n- If you want to trigger when the list has **at least N elements**, you can set `listLength` to that number (e.g., `5`).\n\nLet me know if you want to use the `redis-list-empty` trigger or need help setting up the scaler!",
+  "rag": [
+   true,
+   7.598874807357788,
+   1368
+  ],
+  "rag_answer": "The default `listLength` of the KEDA Redis Lists scaler is \"5\" [1]."
+ },
+ {
+  "q": "Which parameters does the KEDA cron scaler use to define its schedule and replica count?",
+  "base": [
+   false,
+   18.374715089797974,
+   33
+  ],
+  "base_answer": "The **KEDA Cron Horizontal Pod Autoscaler (HPA)** uses the following parameters to define its schedule and replica count:\n\n---\n\n### ✅ **1. `schedule` (required)**\n- **Description**: Defines the schedule for when the scaler should trigger scaling.\n- **Format**: Uses the [Cron expression](https://en.wikipedia.org/wiki/Cron) format.\n- **Example**: `\"schedule\": \"*/5 * * * *\"` (every 5 minutes)\n\n---\n\n### ✅ **2. `minReplicaCount` (required)**\n- **Description**: The minimum number of replicas that should be running at any time.\n- **Default**: `1`\n- **Example**: `\"minReplicaCount\": 1`\n\n---\n\n### ✅ **3. `maxReplicaCount` (optional)**\n- **Description**: The maximum number of replicas that can be scaled up to.\n- **Default**: Same as `minReplicaCount` if not specified.\n- **Example**: `\"maxReplicaCount\": 10`\n\n---\n\n### ✅ **4. `timezone` (optional)**\n- **Description**: Specifies the timezone for the cron schedule.\n- **Format**: IANA timezone name (e.g., `\"America/New_York\"`)\n- **Default**: System default timezone if not specified.\n\n---\n\n### ✅ **5. `scaleTargetRef` (required)**\n- **Description**: Reference to the Kubernetes resource (e.g., Deployment, ReplicaSet) that should be scaled.\n- **Format**:\n  ```yaml\n  \"scaleTargetRef\": {\n    \"apiVersion\": \"apps/v1\",\n    \"kind\": \"Deployment\",\n    \"name\": \"my-deployment\"\n  }\n  ```\n\n---\n\n### ✅ **6. `metadata` (optional)**\n- **Description**: Additional metadata that can be used for filtering or identification.\n- **Example**:\n  ```yaml\n  \"metadata\": {",
+  "rag": [
+   true,
+   14.137006044387817,
+   1207
+  ],
+  "rag_answer": "The KEDA cron scaler uses the following parameters to define its schedule and replica count:\n\n1. **timezone**: This parameter specifies the timezone for the cron schedule. It should be one of the acceptable values from the IANA Time Zone Database [1].\n\n2. **start**: This parameter defines the cron expression indicating the start of the cron schedule. It follows the \"Linux format cron\" (Minute Hour Dom Month Dow) [1].\n\n3. **end**: This parameter defines the cron expression indicating the end of the cron schedule. It also follows the \"Linux format cron\" (Minute Hour Dom Month Dow) [1].\n\n4. **desiredReplicas**: This parameter specifies the number of replicas to which the resource has to be scaled between the start and end of the cron schedule [1].\n\nThese parameters are used to define the schedule and replica count for the KEDA cron scaler."
+ },
+ {
+  "q": "Which metric types does the KEDA CPU scaler support?",
+  "base": [
+   false,
+   15.755624055862427,
+   27
+  ],
+  "base_answer": "The **KEDA (Kubernetes Event-Driven Autoscaler)** **CPU scaler** supports the following **metric types**:\n\n### ✅ Supported Metric Types:\n\n1. **`cpu`**  \n   - This is the most commonly used metric type for CPU-based scaling.\n   - It measures the average CPU utilization across all containers in a pod or across all pods in a deployment.\n\n2. **`memory`**  \n   - Although not a CPU metric, it's worth noting that KEDA also supports memory-based scaling.\n   - However, the question specifically asks about **CPU scaler**, so this is included for completeness.\n\n---\n\n### 📌 Notes:\n\n- The **CPU scaler** in KEDA is part of the **KEDA ScaledObject** configuration.\n- You can specify the metric type in the `metrics` section of your `ScaledObject` YAML.\n\n---\n\n### 📜 Example of a ScaledObject with CPU metric:\n\n```yaml\napiVersion: keda.sh/v1alpha1\nkind: ScaledObject\nmetadata:\n  name: my-scaledobject\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: my-deployment\n  triggers:\n  - type: cpu\n    metadata:\n      type: average\n      threshold: \"70\"\n```\n\n---\n\n### ✅ Summary:\n\n| Metric Type | Supported by KEDA CPU Scaler |\n|-------------|-----------------------------|\n| `cpu`       | ✅ Yes                      |\n| `memory`    | ✅ Yes (but not CPU-specific) |\n\nLet me know if you'd like to see how to configure it for different Kubernetes environments!",
+  "rag": [
+   true,
+   6.895895004272461,
+   1187
+  ],
+  "rag_answer": "The KEDA CPU scaler supports the following metric types: `Utilization` and `AverageValue` [2]."
+ },
+ {
+  "q": "Which KEDA resources let you reuse authentication across ScaledObjects, at namespace and cluster scope?",
+  "base": [
+   false,
+   18.422433137893677,
+   35
+  ],
+  "base_answer": "In KEDA (Kubernetes Event-Driven Autoscaler), if you want to **reuse authentication across multiple ScaledObjects** at **namespace and cluster scope**, you can use the following KEDA resources:\n\n---\n\n### ✅ **1. `ScaledObject` with `authentication` field**\nEach `ScaledObject` can define its own authentication configuration. However, if you want to **reuse authentication** across multiple ScaledObjects, you can define the authentication in a **shared resource**.\n\n---\n\n### ✅ **2. `ScaledObjectTemplate` (KEDA v2.1+)**\nThis is a **KEDA v2.1+** feature that allows you to define a **template** for multiple ScaledObjects. You can define authentication in the template and reuse it across multiple ScaledObjects.\n\n**Example:**\n```yaml\napiVersion: keda.sh/v2beta1\nkind: ScaledObjectTemplate\nmetadata:\n  name: my-scaled-object-template\nspec:\n  authentication:\n    type: basic\n    username: myuser\n    password: mypassword\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: my-deployment\n  triggers:\n    - type: http\n      metadata:\n        url: http://example.com\n```\n\nThen, you can reference this template in multiple ScaledObjects using the `templateName` field.\n\n---\n\n### ✅ **3. `ScaledObject` with `templateName` field (KEDA v2.1+)**\nYou can define a `ScaledObject` that references a `ScaledObjectTemplate` to reuse authentication and other configurations.\n\n**Example:**\n```yaml\napiVersion: keda.sh/v2beta1\nkind: ScaledObject\nmetadata:\n  name: my-scaled-object\nspec:\n  templateName: my-scaled-object-template\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment",
+  "rag": [
+   true,
+   15.606515884399414,
+   1613
+  ],
+  "rag_answer": "KEDA provides two resources that allow you to reuse authentication across `ScaledObjects` at different scopes:\n\n1. **`TriggerAuthentication`**: This resource lets you reuse authentication at the **namespace scope**. It is defined in a specific namespace and can only be used by `ScaledObjects` in the same namespace. You can use `TriggerAuthentication` to share credentials between scalers within the same namespace [1].\n\n2. **`ClusterTriggerAuthentication`**: This resource allows you to reuse authentication at the **cluster scope**. It is a global object and can be used from any namespace. To use `ClusterTriggerAuthentication`, you need to specify the `kind` field as `ClusterTriggerAuthentication` in the authentication reference [1].\n\nBoth resources help in managing authentication more efficiently and securely across different `ScaledObjects`."
+ }
+]

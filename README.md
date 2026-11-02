@@ -43,5 +43,15 @@ GRANT SELECT ON "LiteLLM_SpendLogs" TO grafana_ro;
 - [ ] 3. Cloudflare Tunnel + Access for external users
 - [x] 4. Grafana: TTFT, latency p50/p95, tokens/s, usage per key ([notes/03](notes/03-observability.md))
 - [x] 5. Load test: 1–8 concurrent users ([loadtest/bench.py](loadtest/bench.py))
-- [ ] 6. RAG — web search via SearXNG done; document RAG next
+- [x] 6. RAG: web search via SearXNG; document RAG with hybrid retrieval, 1/10 → 8/10 on a KEDA eval ([benchmarks/03](benchmarks/03-rag-eval.md))
 - [ ] 7. vLLM on EKS with GPU autoscaling ([terraform-aws-eks-ai-cluster](https://github.com/ozy31/terraform-aws-eks-ai-cluster)), cost per 1M tokens vs local
+
+## Document RAG
+
+```bash
+# fetch docs into rag/docs/keda (not committed), e.g. KEDA 2.22 scaler pages from github.com/kedacore/keda-docs
+ollama pull nomic-embed-text
+python3 rag/ozai_rag.py ingest rag/docs/keda
+RAG_KEY=sk-... python3 rag/ozai_rag.py ask "Which SASL modes does the Kafka scaler support?"
+RAG_KEY=sk-... python3 rag/ozai_rag.py eval rag/eval_keda.json
+```

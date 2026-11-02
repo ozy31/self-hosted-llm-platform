@@ -1,0 +1,12 @@
+[
+ {"q": "In the KEDA RabbitMQ scaler, what are the possible values of the mode parameter?", "expect": ["QueueLength", "MessageRate", "DeliverGetRate"]},
+ {"q": "Which protocol values does the KEDA RabbitMQ scaler accept, and which one is the default?", "expect": ["\\bhttp\\b", "\\bamqp\\b", "\\bauto\\b"]},
+ {"q": "What is the default lagThreshold of the KEDA Apache Kafka scaler?", "expect": ["\\b10\\b"]},
+ {"q": "What does lagThreshold measure in the KEDA Apache Kafka scaler?", "expect": ["partition", "\\b(sum|total)\\b"]},
+ {"q": "Which SASL modes does the KEDA Apache Kafka scaler support?", "expect": ["scram_sha256", "scram_sha512", "oauthbearer", "gssapi"]},
+ {"q": "What is the default queueLength target of the KEDA AWS SQS scaler?", "expect": ["\\b5\\b"]},
+ {"q": "What is the default listLength of the KEDA Redis Lists scaler?", "expect": ["\\b5\\b"]},
+ {"q": "Which parameters does the KEDA cron scaler use to define its schedule and replica count?", "expect": ["timezone", "\\bstart\\b", "\\bend\\b", "desiredReplicas"]},
+ {"q": "Which metric types does the KEDA CPU scaler support?", "expect": ["Utilization", "AverageValue"]},
+ {"q": "Which KEDA resources let you reuse authentication across ScaledObjects, at namespace and cluster scope?", "expect": ["\\bTriggerAuthentication\\b", "ClusterTriggerAuthentication"]}
+]
