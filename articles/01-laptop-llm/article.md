@@ -101,13 +101,9 @@ Nothing below threw an error. Every one of these problems showed up as "it works
 
 Qwen3 is a reasoning model. Before it answers, it writes a hidden chain of thought. One simple question produced over 600 streamed reasoning chunks before the first word of the actual answer. The full response took about two minutes, partly because it was queued behind another request on the same GPU.
 
-![A Qwen3 answer in Open WebUI showing "Thought for 33 seconds" followed by a long, confidently wrong answer](images/02-thinking-hallucination.png)
-
 There was a second, quieter problem. With a small `max_tokens`, the model spent the whole budget on thinking and **returned an empty answer**.
 
 **Fix:** two aliases for the same weights. `ozai` has thinking turned off (`reasoning_effort: none`) and is the default. `ozai-think` is there for hard questions. Users choose speed or depth by picking a model name. Nobody has to know about prompt flags.
-
-(The answer in that screenshot is also wrong. I'll come back to that.)
 
 ### 2. A $0 budget blocked everything
 
@@ -145,11 +141,13 @@ For a DevOps engineer this was the key lesson: **an LLM server does not scale li
 
 ### 5. The model is confidently wrong, and has no idea what day it is
 
-An 8B model has to compress a lot of world knowledge into 5 GB, and it shows. In Turkish it mixed up F1 and FIFA. It also said England won the 2022 World Cup against Argentina. Argentina won, beating France.
+An 8B model has to compress a lot of world knowledge into 5 GB, and it shows. Ask it a precise technical question and it answers with total confidence, even when it's wrong. The KEDA Kafka scaler's default `lagThreshold` is **10**. OzAI says **1000**:
 
-![OzAI confusing Formula 1 with the FIFA World Cup, inventing a 2022 result, then saying it has no access to real-time data](images/04-no-live-data.png)
+![OzAI confidently answering that KEDA's default Kafka lagThreshold is 1000 (the docs say 10), then saying its knowledge cutoff is October 2023 and it has no real-time F1 data](images/04-hallucination-no-live-data.png)
 
-Even when it's right, it only knows things from before its training cutoff. Ask about this season and the best answer it can give is "I don't have access to real-time data."
+The second answer shows the other limit. The model only knows what was in its training data, and it reports a knowledge cutoff of October 2023. The current F1 season is out of reach.
+
+Both problems have the same cure: stop relying on what the model remembers, and give it the facts at question time. Later in this series I add document RAG and measure it. On 10 KEDA questions like this one, accuracy goes from 1/10 to 8/10.
 
 **Fix (part one of RAG):** web search through a **self-hosted SearXNG** instance. Open WebUI searches, pulls in the relevant parts of the top results and gives them to the model as context. No search API keys, and no queries sent to a third-party AI provider.
 
