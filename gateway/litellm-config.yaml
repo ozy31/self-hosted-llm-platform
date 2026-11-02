@@ -1,0 +1,23 @@
+# LiteLLM gateway: OpenAI-compatible API in front of the local Ollama models.
+model_list:
+  # Fast chat: Qwen3 with thinking disabled (thinking can add 1-2 min per answer on an M1 Pro).
+  - model_name: ozai
+    litellm_params:
+      model: ollama_chat/qwen3:8b
+      api_base: http://host.docker.internal:11434
+      reasoning_effort: none
+  - model_name: ozai-think
+    litellm_params:
+      model: ollama_chat/qwen3:8b
+      api_base: http://host.docker.internal:11434
+  - model_name: ozai-coder
+    litellm_params:
+      model: ollama_chat/qwen2.5-coder:3b
+      api_base: http://host.docker.internal:11434
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
