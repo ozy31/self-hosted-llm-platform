@@ -1,309 +1,358 @@
 {
- "title": "OzAI \u2014 LLM Gateway",
- "uid": "ozai-gateway",
- "schemaVersion": 39,
- "refresh": "10s",
- "time": {
-  "from": "now-1h",
-  "to": "now"
- },
- "panels": [
-  {
-   "type": "stat",
-   "title": "Requests",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 6,
-    "h": 4
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
-    {
-     "refId": "A",
-     "format": "table",
-     "rawQuery": true,
-     "rawSql": "SELECT count(*) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\")"
-    }
-   ]
+  "title": "OzAI \u2014 LLM Gateway",
+  "uid": "ozai-gateway",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
   },
-  {
-   "type": "stat",
-   "title": "Errors",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 6,
-    "y": 0,
-    "w": 6,
-    "h": 4
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+  "panels": [
     {
-     "refId": "A",
-     "format": "table",
-     "rawQuery": true,
-     "rawSql": "SELECT count(*) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status <> 'success'"
-    }
-   ]
-  },
-  {
-   "type": "stat",
-   "title": "Completion tokens",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 12,
-    "y": 0,
-    "w": 6,
-    "h": 4
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "stat",
+      "title": "Requests",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\")"
+        }
+      ]
+    },
     {
-     "refId": "A",
-     "format": "table",
-     "rawQuery": true,
-     "rawSql": "SELECT coalesce(sum(completion_tokens),0) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\")"
-    }
-   ]
-  },
-  {
-   "type": "stat",
-   "title": "TTFT p95",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 18,
-    "y": 0,
-    "w": 6,
-    "h": 4
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "s",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "stat",
+      "title": "Errors",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status <> 'success'"
+        }
+      ]
+    },
     {
-     "refId": "A",
-     "format": "table",
-     "rawQuery": true,
-     "rawSql": "SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success'"
-    }
-   ]
-  },
-  {
-   "type": "timeseries",
-   "title": "Requests by API key",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 0,
-    "y": 4,
-    "w": 12,
-    "h": 8
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "stat",
+      "title": "Completion tokens",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT coalesce(sum(completion_tokens),0) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\")"
+        }
+      ]
+    },
     {
-     "refId": "A",
-     "format": "time_series",
-     "rawQuery": true,
-     "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval), metadata->>'user_api_key_alias' AS metric, count(*) AS value FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") GROUP BY 1,2 ORDER BY 1"
-    }
-   ]
-  },
-  {
-   "type": "timeseries",
-   "title": "Time to first token (p50 / p95)",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 12,
-    "y": 4,
-    "w": 12,
-    "h": 8
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "s",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "stat",
+      "title": "TTFT p95",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' AND \"endTime\" - \"completionStartTime\" > interval '100 milliseconds'"
+        }
+      ]
+    },
     {
-     "refId": "A",
-     "format": "time_series",
-     "rawQuery": true,
-     "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval), percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) AS p50, percentile_cont(0.95) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) AS p95 FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' GROUP BY 1 ORDER BY 1"
-    }
-   ]
-  },
-  {
-   "type": "timeseries",
-   "title": "End-to-end latency (p50 / p95)",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 0,
-    "y": 12,
-    "w": 12,
-    "h": 8
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "s",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "timeseries",
+      "title": "Requests by API key",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval,NULL), metadata->>'user_api_key_alias' AS metric, count(*) AS value FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") GROUP BY 1,2 ORDER BY 1"
+        }
+      ],
+      "interval": "10s"
+    },
     {
-     "refId": "A",
-     "format": "time_series",
-     "rawQuery": true,
-     "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval), percentile_cont(0.5) WITHIN GROUP (ORDER BY request_duration_ms/1000.0) AS p50, percentile_cont(0.95) WITHIN GROUP (ORDER BY request_duration_ms/1000.0) AS p95 FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' GROUP BY 1 ORDER BY 1"
-    }
-   ]
-  },
-  {
-   "type": "timeseries",
-   "title": "Per-request decode speed (avg tok/s)",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 12,
-    "y": 12,
-    "w": 12,
-    "h": 8
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "timeseries",
+      "title": "Time to first token (p50 / p95)",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval,NULL), percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) AS p50, percentile_cont(0.95) WITHIN GROUP (ORDER BY extract(epoch from \"completionStartTime\"-\"startTime\")) AS p95 FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' AND \"endTime\" - \"completionStartTime\" > interval '100 milliseconds' GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "interval": "10s"
+    },
     {
-     "refId": "A",
-     "format": "time_series",
-     "rawQuery": true,
-     "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval), avg(completion_tokens/nullif(extract(epoch from \"endTime\"-\"completionStartTime\"),0)) AS tok_s FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' AND completion_tokens>10 GROUP BY 1 ORDER BY 1"
-    }
-   ]
-  },
-  {
-   "type": "timeseries",
-   "title": "Completion tokens by model",
-   "datasource": {
-    "type": "grafana-postgresql-datasource",
-    "uid": "litellm-pg"
-   },
-   "gridPos": {
-    "x": 0,
-    "y": 20,
-    "w": 24,
-    "h": 8
-   },
-   "fieldConfig": {
-    "defaults": {
-     "unit": "short",
-     "custom": {
-      "drawStyle": "line",
-      "lineWidth": 2,
-      "fillOpacity": 10,
-      "spanNulls": true
-     }
-    }
-   },
-   "targets": [
+      "type": "timeseries",
+      "title": "End-to-end latency (p50 / p95)",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval,NULL), percentile_cont(0.5) WITHIN GROUP (ORDER BY request_duration_ms/1000.0) AS p50, percentile_cont(0.95) WITHIN GROUP (ORDER BY request_duration_ms/1000.0) AS p95 FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "interval": "10s"
+    },
     {
-     "refId": "A",
-     "format": "time_series",
-     "rawQuery": true,
-     "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval), model_group AS metric, sum(completion_tokens) AS value FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") GROUP BY 1,2 ORDER BY 1"
+      "type": "timeseries",
+      "title": "Per-request decode speed (avg tok/s)",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 12,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval,NULL), avg(completion_tokens/nullif(extract(epoch from \"endTime\"-\"completionStartTime\"),0)) AS tok_s FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") AND status='success' AND \"endTime\" - \"completionStartTime\" > interval '100 milliseconds' AND completion_tokens>10 GROUP BY 1 ORDER BY 1"
+        }
+      ],
+      "interval": "10s"
+    },
+    {
+      "type": "timeseries",
+      "title": "Completion tokens by model",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "litellm-pg"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 24,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": true
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(\"startTime\",$__interval,NULL), model_group AS metric, sum(completion_tokens) AS value FROM \"LiteLLM_SpendLogs\" WHERE $__timeFilter(\"startTime\") GROUP BY 1,2 ORDER BY 1"
+        }
+      ],
+      "interval": "10s"
     }
-   ]
-  }
- ]
+  ]
 }

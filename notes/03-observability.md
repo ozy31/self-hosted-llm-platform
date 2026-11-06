@@ -7,3 +7,4 @@
 - TTFT = completionStartTime - startTime; decode speed = completion_tokens / (endTime - completionStartTime).
 - Gotcha: Grafana provisioning YAML — `$__env{...}` inside a flow mapping `{ }` breaks parsing; use block style and plain $VAR.
 - Trade-off vs Prometheus: SQL over request logs = exact per-request percentiles, but no GPU/queue-depth metrics (Ollama exposes none). On EKS/vLLM (article 3) vLLM's native /metrics + DCGM cover that.
+- Bug found 2026-11-06: non-streaming requests log completionStartTime ≈ endTime (decode time 0.000 s) → decode panel spiked to ~13k tok/s and their "TTFT" was really full latency. Fix: TTFT/decode queries only count rows with endTime - completionStartTime > 100 ms (streamed). Also: stat colors (TTFT p95 thresholds 2 s/5 s), timeseries interval 10s, NULL gap fill.

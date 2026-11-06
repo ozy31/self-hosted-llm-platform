@@ -19,3 +19,12 @@ Re-run on idle machine (2026-11-02):
 | 2 | 2/0 | 3.4s | 6.7s | 9.8s | 13.0s | 14.5 | 19.7 |
 | 4 | 4/0 | 9.3s | 18.6s | 15.4s | 24.6s | 8.7 | 20.8 |
 - Total throughput stays ~20 tok/s; TTFT max roughly = queue position × one answer → requests effectively served one at a time.
+
+Re-run right after starting the stack (2026-11-06):
+| Users | OK/err | TTFT p50 | TTFT max | Latency p50 | Latency max | Per-user tok/s | Total tok/s |
+|---|---|---|---|---|---|---|---|
+| 1 | 1/0 | 7.1s | 7.1s | 13.2s | 13.2s | 9.7 | 9.7 |
+| 2 | 2/0 | 3.2s | 6.3s | 9.3s | 12.2s | 15.4 | 20.9 |
+| 4 | 4/0 | 9.4s | 18.6s | 15.5s | 24.6s | 8.6 | 20.8 |
+| 8 | 8/0 | 22.2s | 44.3s | 28.6s | 50.3s | 4.5 | 20.4 |
+- 1-user row is a cold start: Ollama had just started and loaded qwen3:8b (~5 GB) on the first request. Same effect after keep_alive (default 5m) unloads an idle model.
