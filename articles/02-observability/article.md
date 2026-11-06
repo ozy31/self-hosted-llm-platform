@@ -240,7 +240,7 @@ The first alerts I'd write, based on what actually went wrong in this project:
 
 1. **Split latency into TTFT and decode speed.** One "duration" number hides whether users are waiting in a queue or reading a long answer.
 2. **Your gateway's request log is a metrics source.** If Prometheus isn't available, a read-only SQL datasource gives you exact percentiles in an afternoon.
-3. **Tag traffic by API key.** It turned a confusing benchmark into a one-glance diagnosis.
+3. **Tag traffic by API key.** A noisy neighbor becomes visible at a glance, instead of after digging through raw logs.
 4. **An LLM server's throughput is fixed by the hardware.** Load tests on a single GPU don't find a breaking point. They find a queue, and they tell you how long it gets.
 
 ## Next: part 3
