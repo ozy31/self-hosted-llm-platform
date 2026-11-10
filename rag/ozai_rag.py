@@ -6,7 +6,8 @@ Usage:
   python3 rag/ozai_rag.py ask "How does the RabbitMQ scaler pick a mode?"
   python3 rag/ozai_rag.py eval rag/eval_keda.json          # baseline vs RAG accuracy
 
-Env: RAG_KEY (LiteLLM virtual key), optional RAG_MODEL (default ozai).
+Env: RAG_KEY (LiteLLM virtual key), optional RAG_MODEL (default ozai), RAG_MAX_TOKENS (default 400;
+raise it for ozai-think, which spends tokens on reasoning first).
 """
 import json, math, os, re, sys, time, urllib.request
 from pathlib import Path
@@ -20,6 +21,8 @@ OVERLAP_WORDS = CHUNK_WORDS // 6
 TOP_K = int(os.environ.get("RAG_TOP_K", 6))
 # Weight of the keyword score in hybrid retrieval; 0 = pure embeddings.
 HYBRID = float(os.environ.get("RAG_HYBRID", 0.3))
+# MMR diversity: 1 = pure relevance (off); lower values penalise chunks similar to ones already picked.
+MMR = float(os.environ.get("RAG_MMR", 0.7))
 STOPWORDS = set("what which does the and for are with that this from how its into does keda scaler value values "
                 "default possible parameter parameters use uses let you one".split())
 
@@ -93,12 +96,21 @@ def keyword_scores(question, chunks):
 def retrieve(question, k=TOP_K):
     chunks, q = json.loads(INDEX.read_text()), embed([question], "query")[0]
     kw = keyword_scores(question, chunks) if HYBRID else [0] * len(chunks)
-    scored = [(cosine(q, c["vec"]) + HYBRID * s, c) for c, s in zip(chunks, kw)]
-    return [c for _, c in sorted(scored, key=lambda x: x[0], reverse=True)[:k]]
+    scored = sorted([(cosine(q, c["vec"]) + HYBRID * s, c) for c, s in zip(chunks, kw)], key=lambda x: x[0], reverse=True)
+    if MMR >= 1:
+        return [c for _, c in scored[:k]]
+    # Maximal Marginal Relevance: near-identical chunks (e.g. ten YAML examples of the same scaler)
+    # otherwise fill every slot and push out the one paragraph that states the answer.
+    pool, picked = scored[:5 * k], []
+    while pool and len(picked) < k:
+        best = max(pool, key=lambda x: MMR * x[0] - (1 - MMR) * max((cosine(x[1]["vec"], p["vec"]) for p in picked), default=0))
+        picked.append(best[1]); pool.remove(best)
+    return picked
 
 
 def chat(messages):
-    body = {"model": os.environ.get("RAG_MODEL", "ozai"), "messages": messages, "temperature": 0, "max_tokens": 400}
+    body = {"model": os.environ.get("RAG_MODEL", "ozai"), "messages": messages, "temperature": 0,
+            "max_tokens": int(os.environ.get("RAG_MAX_TOKENS", 400))}
     d = post(GATEWAY, body, {"Authorization": f"Bearer {os.environ['RAG_KEY']}"})
     return d["choices"][0]["message"]["content"].strip(), d["usage"]["prompt_tokens"]
 
