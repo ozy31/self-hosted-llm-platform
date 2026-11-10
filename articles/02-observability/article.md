@@ -243,8 +243,9 @@ The first alerts I'd write, based on what actually went wrong in this project:
 3. **Tag traffic by API key.** A noisy neighbor becomes visible at a glance, instead of after digging through raw logs.
 4. **An LLM server's throughput is fixed by the hardware.** Load tests on a single GPU don't find a breaking point. They find a queue, and they tell you how long it gets.
 
-## Next: part 3
+## Next: parts 3 and 4
 
-Everything so far runs on a laptop and serves requests one at a time. In part 3 I move the platform to **Amazon EKS with GPU nodes**, swap Ollama for **vLLM** with continuous batching, autoscale on queue depth with **KEDA**, and run the same load test to see whether 8 users finally get more than 20 tokens per second. I'll also compare the cost with paying per token.
+- **Part 3: RAG.** The model in this series confidently invents facts. Next I give it my own documents to answer from, and measure it on a 10-question test: from 1/10 to 9/10, and why the last failures weren't the model's fault.
+- **Part 4: from laptop to production.** Everything so far serves requests one at a time. I move the platform to **Amazon EKS with GPU nodes**, swap Ollama for **vLLM** with continuous batching, autoscale on queue depth with **KEDA**, and run the same load test to see whether 8 users finally get more than 20 tokens per second. I'll also compare the cost with paying per token.
 
 All configs, the dashboard JSON, the load test and raw benchmark results are in the repo: **[github.com/ozy31/self-hosted-llm-platform](https://github.com/ozy31/self-hosted-llm-platform)**

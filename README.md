@@ -43,7 +43,7 @@ GRANT SELECT ON "LiteLLM_SpendLogs" TO grafana_ro;
 - [ ] 3. Cloudflare Tunnel + Access for external users
 - [x] 4. Grafana: TTFT, latency p50/p95, tokens/s, usage per key ([notes/03](notes/03-observability.md))
 - [x] 5. Load test: 1–8 concurrent users ([loadtest/bench.py](loadtest/bench.py))
-- [x] 6. RAG: web search via SearXNG; document RAG with hybrid retrieval, 1/10 → 8/10 on a KEDA eval ([benchmarks/03](benchmarks/03-rag-eval.md))
+- [x] 6. RAG: web search via SearXNG; document RAG with hybrid retrieval + MMR, 1/10 → 9/10 on a KEDA eval ([benchmarks/03](benchmarks/03-rag-eval.md))
 - [ ] 7. vLLM on EKS with GPU autoscaling ([terraform-aws-eks-ai-cluster](https://github.com/ozy31/terraform-aws-eks-ai-cluster)), cost per 1M tokens vs local
 
 ## Document RAG
