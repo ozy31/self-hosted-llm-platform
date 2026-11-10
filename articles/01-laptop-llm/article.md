@@ -6,7 +6,7 @@ I'm a DevOps engineer. I've spent years running Kubernetes clusters, writing Ter
 
 Calling the OpenAI API from a script didn't feel like a good answer. So I set myself a different goal: **run an open-weight LLM myself and serve it to other people like a real platform**, with API keys, rate limits, usage tracking and numbers I measured myself.
 
-This is part 1 of a 3-part series. Everything here runs on one laptop, a MacBook Pro M1 Pro with 16 GB of RAM. Part 2 covers observability and load testing. Part 3 moves the same platform to GPUs on Amazon EKS.
+This is part 1 of a 4-part series. Everything here runs on one laptop, a MacBook Pro M1 Pro with 16 GB of RAM. Part 2 covers observability and load testing, part 3 covers RAG, and part 4 moves the same platform to GPUs on Amazon EKS.
 
 I call the platform **OzAI**. To be clear from the start: OzAI is *not* a model I trained. It's a self-hosted platform built on open-weight models (Qwen3 8B and Qwen2.5-Coder 3B). The engineering is in serving them.
 
@@ -217,7 +217,8 @@ Cursor is another story. It calls custom models from its own servers, so it can'
 ## What's next
 
 - **Part 2: observability and load testing.** A Grafana dashboard for TTFT, latency percentiles and tokens per second, built from the gateway's request log. Plus why LiteLLM's Prometheus metrics weren't an option.
-- **Part 3: from laptop to production.** vLLM on Amazon EKS with GPU nodes, autoscaling on queue depth with KEDA, and the cost of self-hosting compared with paying per token.
+- **Part 3: RAG.** Giving the model my own documents to answer from, measured on a 10-question test: from 1/10 to 9/10.
+- **Part 4: from laptop to production.** vLLM on Amazon EKS with GPU nodes, autoscaling on queue depth with KEDA, and the cost of self-hosting compared with paying per token.
 
 All configs, benchmarks and notes are in the repo: **[github.com/ozy31/self-hosted-llm-platform](https://github.com/ozy31/self-hosted-llm-platform)**
 
