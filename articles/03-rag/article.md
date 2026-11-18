@@ -189,6 +189,6 @@ One more detail from that question: with MMR, `ozai-think` still answered wrong,
 
 ## Next: part 4
 
-Everything so far runs on a laptop, serves one request at a time, and uses an 8B model. In part 4 I move OzAI to **Amazon EKS with GPU nodes**, replace Ollama with **vLLM** and its continuous batching, autoscale on queue depth with **KEDA** (yes, the same KEDA from this article's test set), and run the load test from part 2 again. I'll also compare the cost of all this with paying per token.
+Everything so far runs on a laptop, serves one request at a time, and uses an 8B model. In [part 4](https://dev.to/ozy31/i-autoscaled-my-llm-on-queue-depth-it-scaled-down-under-full-load-5do5) I autoscale the model server on queue depth with **KEDA** (yes, the same KEDA from this article's test set) in a local Kubernetes cluster and load test it. The first design scaled down under full load. Part 4 shows why, and the one-line metric fix.
 
 All code, the eval set and every result file are in the repo: **[github.com/ozy31/self-hosted-llm-platform](https://github.com/ozy31/self-hosted-llm-platform)**
