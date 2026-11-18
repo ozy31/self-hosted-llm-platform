@@ -1,0 +1,16 @@
+# Run from the repo root: kind create cluster --config k8s-lab/kind.yaml
+# Single-node local cluster. Model weights come from the host (stands in for Mountpoint S3 on EKS),
+# and the inference Service is reachable on localhost:8081 through a NodePort.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: ozai-lab
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: k8s-lab/models   # relative to where kind runs: the repo root
+        containerPath: /models
+        readOnly: true
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 8081
+        listenAddress: 127.0.0.1

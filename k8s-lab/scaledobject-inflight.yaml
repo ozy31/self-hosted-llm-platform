@@ -1,0 +1,31 @@
+# Same shape as modules/inference/charts/vllm-service/templates/scaledobject.yaml in
+# terraform-aws-eks-ai-cluster; only the metric name and the windows differ.
+# Production: 1 pod / 120s up, 600s down stabilization (a replica = a GPU node).
+# Lab: windows shortened so a run fits in minutes.
+# Fix: scale on in-flight requests (processing + waiting) per pod, threshold = slots per pod.
+# Waiting alone drops as soon as new replicas absorb the queue, which caused scale-down under load.
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata: {name: ozai-lab, namespace: ozai}
+spec:
+  scaleTargetRef: {name: ozai-lab}
+  minReplicaCount: 1
+  maxReplicaCount: 3
+  pollingInterval: 5
+  cooldownPeriod: 60
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          policies: [{type: Pods, value: 1, periodSeconds: 15}]
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies: [{type: Pods, value: 1, periodSeconds: 30}]
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-server.monitoring.svc:80
+        query: sum(llamacpp:requests_processing{namespace="ozai"} + llamacpp:requests_deferred{namespace="ozai"}) or vector(0)
+        threshold: "2"
+        activationThreshold: "0"

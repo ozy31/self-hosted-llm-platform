@@ -44,7 +44,8 @@ GRANT SELECT ON "LiteLLM_SpendLogs" TO grafana_ro;
 - [x] 4. Grafana: TTFT, latency p50/p95, tokens/s, usage per key ([notes/03](notes/03-observability.md))
 - [x] 5. Load test: 1–8 concurrent users ([loadtest/bench.py](loadtest/bench.py))
 - [x] 6. RAG: web search via SearXNG; document RAG with hybrid retrieval + MMR, 1/10 → 9/10 on a KEDA eval ([benchmarks/03](benchmarks/03-rag-eval.md))
-- [ ] 7. vLLM on EKS with GPU autoscaling ([terraform-aws-eks-ai-cluster](https://github.com/ozy31/terraform-aws-eks-ai-cluster)), cost per 1M tokens vs local
+- [x] 7a. Queue-depth autoscaling tested locally: kind + KEDA + llama.cpp, waiting-only metric flaps under load, in-flight metric fixes it ([benchmarks/04](benchmarks/04-k8s-lab.md), [k8s-lab/](k8s-lab))
+- [ ] 7b. vLLM on EKS with real GPU numbers ([terraform-aws-eks-ai-cluster](https://github.com/ozy31/terraform-aws-eks-ai-cluster)): cold start, throughput, cost per 1M tokens
 
 ## Document RAG
 

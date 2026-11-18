@@ -1,0 +1,41 @@
+# llama.cpp server as the local stand-in for vLLM: continuous batching across --parallel slots
+# and a Prometheus queue metric (llamacpp:requests_deferred ~ vllm:num_requests_waiting).
+apiVersion: v1
+kind: Namespace
+metadata: {name: ozai}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: ozai-lab, namespace: ozai}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: ozai-lab}}
+  template:
+    metadata:
+      labels: {app: ozai-lab}
+      annotations: {prometheus.io/scrape: "true", prometheus.io/port: "8080", prometheus.io/path: /metrics}
+    spec:
+      containers:
+        - name: llama
+          image: ghcr.io/ggml-org/llama.cpp:server
+          args: ["-m", "/models/qwen2.5-0.5b-instruct-q4_k_m.gguf", "--alias", "ozai-lab",
+                 "--host", "0.0.0.0", "--port", "8080", "--metrics",
+                 "--parallel", "2", "--ctx-size", "4096", "--threads", "2"]
+          ports: [{containerPort: 8080, name: http}]
+          resources:
+            requests: {cpu: "2", memory: 1Gi}
+            limits: {cpu: "2", memory: 2Gi}
+          startupProbe: {httpGet: {path: /health, port: http}, periodSeconds: 2, failureThreshold: 150}
+          readinessProbe: {httpGet: {path: /health, port: http}, periodSeconds: 5}
+          volumeMounts: [{name: models, mountPath: /models, readOnly: true}]
+      volumes:
+        - name: models
+          hostPath: {path: /models, type: Directory}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: ozai-lab, namespace: ozai}
+spec:
+  type: NodePort
+  selector: {app: ozai-lab}
+  ports: [{port: 8080, targetPort: http, nodePort: 30080}]

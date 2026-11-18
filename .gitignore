@@ -6,3 +6,4 @@ rag/index.json
 rag/docs/
 rag/eval_results.json
 articles/*/src/
+k8s-lab/models/
